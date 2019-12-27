@@ -26,6 +26,8 @@ pipeline {
         BRAVE_ARTIFACTS_S3_BUCKET = credentials("brave-jenkins-artifacts-s3-bucket")
         SLACK_USERNAME_MAP = credentials("github-to-slack-username-map")
         SIGN_WIDEVINE_PASSPHRASE = credentials("447b2fa7-c989-43af-9047-8ae158fad0a3")
+        HTTP_PROXY = "127.0.0.1:3128"
+        HTTPS_PROXY = "127.0.0.1:3128"
     }
     stages {
         stage("env") {
@@ -322,6 +324,7 @@ pipeline {
                             }
                             steps {
                                 sh """
+                                    docker run --name squid -d --restart=always --publish 3128:3128 --volume /srv/docker/squid/cache:/var/spool/squid sameersbn/squid
                                     rm -rf src/brave
                                     npm run init
                                 """
